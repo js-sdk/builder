@@ -54,6 +54,6 @@ run-publish: check-list post-check-list
 	npm publish
 
 post-publish:
-	@sh ./builder/update_version --clean
+	@sh ./builder/update_version.sh --clean
 
 publish: pre-publish run-publish post-publish

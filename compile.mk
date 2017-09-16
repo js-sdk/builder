@@ -1,23 +1,36 @@
 BABEL=./node_modules/babel-cli/bin/babel.js
 BROWSERIFY=./node_modules/browserify/bin/cmd.js
-MOCHA=./node_modules/mocha/bin/_mocha
+MOCHA_RUNNER=./node_modules/mocha/bin/_mocha
 NYC=./node_modules/.bin/nyc
 
 CFLAGS=--plugins transform-es2015-modules-umd
 TEST_CFLAGS= --compilers js:babel-register --require should
-TEST_REPORT=
+TEST_REPORT= --check-coverage --lines 100 --functions 100 --branches 100 --statements 100
 
+ifdef DEV
 ifeq ("$(DEV)", "1")
 TEST_CFLAGS+= -w
 endif
+endif
 
+ifndef DEV
 ifneq ("$(REPORT)", "")
 TEST_REPORT+= --reporter=$(REPORT)
+endif
+
+ifeq ("$(REPORT)", "")
+TEST_REPORT+= --reporter=text
+endif
 endif
 
 # Rules for compiling source
 
 compile: all
+
+# Rules for testing
+
+test:
+	$(NYC) $(TEST_REPORT) $(MOCHA_RUNNER) $(TEST_CFLAGS) tests/*.js
 
 # Rules for build and publish
 
